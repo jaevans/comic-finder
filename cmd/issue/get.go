@@ -44,7 +44,7 @@ func NewIssueGetCmd() *cobra.Command {
 func printIssue(issue *types.Issue) {
 	switch viper.GetString("format") {
 	case "text":
-		fmt.Printf("comicvine:%d - %s Issue #%d [Publisher: %s]\n", issue.Id, issue.Volume.Name, issue.IssueNumber, issue.Volume.Publisher.Name)
+		fmt.Printf("comicvine:%d - '%s' Issue #%s [Publisher: %#v]\n", issue.Id, issue.Volume.Name, issue.IssueNumber, issue.Volume.Id)
 	case "yaml":
 		encoder := yaml.NewEncoder(os.Stdout)
 		err := encoder.Encode(issue)
@@ -82,8 +82,17 @@ func Run(command *cobra.Command, args []string) {
 
 	issueNumber := viper.GetInt("issue-number")
 	volumeId := viper.GetInt("volume-id")
-	if issueNumber != 0 {
-		issues, err := client.GetIssuesByVolume()
+	if issueNumber == 0 {
+		issues, err := client.GetIssuesByVolume(volumeId, types.GetOptions{})
+		if err != nil {
+			log.Fatal("error getting issues for volumes")
+		}
+		var count int
+
+		for _, issue := range issues {
+			count++
+			printIssue(issue)
+		}
 	}
 
 	// if err != nil {

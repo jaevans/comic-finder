@@ -13,31 +13,44 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-// issueCmd represents the issue command
-var issueCmd = &cobra.Command{
-	Use:   "issue",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+var issueCmd *cobra.Command
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("issue called")
-	},
-}
+const ISSUEIDKEY = "issue-id"
+const ISSUENUMBERKEY = "issue"
+const VOLUMEIDKEY = "volume-id"
 
-func init() {
-	rootCmd.AddCommand(issueCmd)
+func NewIssueCmd() *cobra.Command {
+
+	issueCmd = &cobra.Command{
+		Use:   "issue",
+		Short: "Access information about issues",
+		Long: `Access information about issues.
+		
+		A longer description that spans multiple lines and likely contains examples
+	and usage of using your command. For example:
+	
+	Cobra is a CLI library for Go that empowers applications.
+	This application is a tool to generate the needed files
+	to quickly create a Cobra application.`,
+		// Run: func(cmd *cobra.Command, args []string) {
+		// 	fmt.Println("issue called")
+		// },
+	}
+
+	// issueCmd.Flags().IntVar(&id, "id", -1, "The ComicVine ID of the issue")
+
+	// register all the sub-commands here
+
+	issueCmd.AddCommand(NewIssueGetCmd())
+	// issueCmd.AddCommand(NewissueSearchCmd())
 
 	// Here you will define your flags and configuration settings.
 
@@ -47,5 +60,16 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// issueCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	issueCmd.PersistentFlags().Int(ISSUEIDKEY, 0, "The ComicVine ID of the issue")
+	viper.BindPFlag(ISSUEIDKEY, issueCmd.PersistentFlags().Lookup(ISSUEIDKEY))
+
+	issueCmd.PersistentFlags().Int(VOLUMEIDKEY, 0, "The ComicVine ID of the volume")
+	issueCmd.MarkPersistentFlagRequired(VOLUMEIDKEY)
+	viper.BindPFlag(VOLUMEIDKEY, issueCmd.PersistentFlags().Lookup(VOLUMEIDKEY))
+	return issueCmd
+
+}
+
+func init() {
+
 }

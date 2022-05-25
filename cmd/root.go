@@ -19,7 +19,9 @@ import (
 	"fmt"
 	"os"
 
+	issue "github.com/jaevans/comic-finder/cmd/issue"
 	volume "github.com/jaevans/comic-finder/cmd/volume"
+
 	"github.com/jaevans/comic-finder/pkg/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -49,9 +51,6 @@ to quickly create a Cobra application.`,
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	// create the API client
-	// client := types.NewComicVineClient(viper.GetString("api-key"))
-	// register sub commands
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
@@ -84,6 +83,7 @@ func init() {
 	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 	rootCmd.AddCommand(volume.NewVolumeCmd())
+	rootCmd.AddCommand(issue.NewIssueCmd())
 }
 
 // initConfig reads in config file and ENV variables if set.
