@@ -27,6 +27,10 @@ func NewComicVineClient(apiKey string) *ComicVineClient {
 	return cvApi
 }
 
+/* genericGetPaged returns a page of generic results and identifies if there are more available.
+
+More responses are available if number of returned results on this page + (offset) < total number of results
+*/
 func (a *ComicVineClient) genericGetPaged(resource ResourceType, opts GetOptions) (Response, bool, error) {
 	fields := strings.Join(opts.Fields, ",")
 	filters := strings.Join(opts.Filters, ",")

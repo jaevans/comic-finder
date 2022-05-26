@@ -83,21 +83,17 @@ func Run(command *cobra.Command, args []string) {
 	issueNumber := viper.GetInt("issue-number")
 	volumeId := viper.GetInt("volume-id")
 	if issueNumber == 0 {
-		issues, err := client.GetIssuesByVolume(volumeId, types.GetOptions{})
+		issues, err := client.GetIssuesByVolume(volumeId, types.GetOptions{
+			Sort: "asc",
+		})
 		if err != nil {
 			log.Fatal("error getting issues for volumes")
 		}
-		var count int
 
 		for _, issue := range issues {
-			count++
 			printIssue(issue)
 		}
 	}
-
-	// if err != nil {
-	// 	panic(err)
-	// }
 
 }
 
