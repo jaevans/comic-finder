@@ -42,23 +42,23 @@ type Issues []*Issue
 func (a *ComicVineClient) GetIssues(opts GetOptions) (Issues, error) {
 	var resp Issues
 
-	var more bool
+	more := true
+	var count int
+	oldLimit := opts.Limit
+	opts.Limit = 1
 
+	// Get a single item to find out the total number of items
 	responseObject, more, err := a.genericGetPaged(ResourceTypeIssue, opts)
 	if err != nil {
 		return resp, err
 	}
-	resp = make(Issues, responseObject.TotalResults)
-	var count int
-	for _, data := range responseObject.Results {
-		var issue Issue
-		err = json.Unmarshal(data, &issue)
-		if err != nil {
-			log.Fatal(err)
-		}
-		resp[count] = &issue
-		count++
+	if responseObject.TotalResults == 0 {
+		return resp, err
 	}
+	opts.Limit = oldLimit
+
+	resp = make(Issues, responseObject.TotalResults)
+
 	for more {
 		opts.Offset = count
 		responseObject, more, err = a.genericGetPaged(ResourceTypeIssue, opts)
@@ -69,7 +69,6 @@ func (a *ComicVineClient) GetIssues(opts GetOptions) (Issues, error) {
 			var issue Issue
 			err = json.Unmarshal(data, &issue)
 			if err != nil {
-				fmt.Printf("%#v", string(data))
 				log.Fatal(err)
 			}
 			resp[count] = &issue
