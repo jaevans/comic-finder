@@ -1,0 +1,1 @@
+Simple command like client for the [ComicVine](https://comicvine.gamespot.com) API to help me quickly look up metadata on comics in my library.
